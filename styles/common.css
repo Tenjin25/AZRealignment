@@ -1,0 +1,132 @@
+/* Loading spinner */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    backdrop-filter: blur(5px);
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Progress bar */
+.progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: #f0f0f0;
+    z-index: 10000;
+}
+
+.progress-bar .fill {
+    height: 100%;
+    background: #3498db;
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+/* Social sharing */
+.share-button {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+    border-radius: 20px;
+    color: white;
+    text-decoration: none;
+    margin: 5px;
+    font-size: 14px;
+    transition: opacity 0.2s;
+}
+
+.share-button:hover {
+    opacity: 0.9;
+}
+
+.share-button.linkedin {
+    background: #0077b5;
+}
+
+.share-button.reddit {
+    background: #ff4500;
+}
+
+.share-button.twitter {
+    background: #1da1f2;
+}
+
+/* Mobile warning */
+.mobile-warning {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+    padding: 12px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    text-align: center;
+    max-width: 90%;
+    z-index: 1000;
+}
+
+@media (max-width: 768px) {
+    .mobile-warning {
+        display: block;
+    }
+}
+
+/* Analytics consent banner */
+.analytics-consent {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 15px;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10000;
+}
+
+.analytics-consent button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.analytics-consent .accept {
+    background: #2563eb;
+    color: white;
+}
+
+.analytics-consent .decline {
+    background: #e5e7eb;
+    color: #374151;
+}

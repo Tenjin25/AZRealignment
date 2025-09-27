@@ -1,0 +1,493 @@
+body { 
+    margin: 0; 
+    padding: 0; 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#map { 
+    position: absolute; 
+    top: 0; 
+    bottom: 0; 
+    left: 0;
+    right: 400px; /* Leave space for sidebar */
+    transition: right 0.3s ease;
+}
+
+#map.sidebar-minimized {
+    right: 0px; /* Minimized sidebar width */
+}
+
+/* Main Controls */
+.main-controls {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    z-index: 1000;
+    min-width: 380px;
+    max-width: 420px;
+    transition: all 0.3s ease;
+}
+
+.main-controls.minimized {
+    min-width: 60px;
+    max-width: 60px;
+    padding: 15px;
+}
+
+.main-controls.minimized .controls-content {
+    display: none;
+}
+
+.controls-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.minimize-btn {
+    background: #e5e7eb;
+    border: none;
+    border-radius: 6px;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+
+.minimize-btn:hover {
+    background: #d1d5db;
+}
+
+.floating-expand-btn {
+    position: fixed;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    z-index: 1001;
+    transition: background-color 0.2s;
+    display: none;
+}
+
+.floating-expand-btn:hover {
+    background: #f3f4f6;
+}
+
+.sidebar.minimized + .floating-expand-btn {
+    display: flex;
+}
+
+.main-controls h3 {
+    margin: 0;
+    color: #1f2937;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.main-controls select, .main-controls button {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+/* Sidebar */
+.sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 400px;
+    height: 100vh;
+    background: #ffffff;
+    border-left: 1px solid #e5e7eb;
+    box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+    overflow-y: auto;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.sidebar.minimized {
+    transform: translateX(100%) !important;
+    visibility: hidden !important;
+}
+
+/* Ensure no gray background when sidebar is minimized */
+body.sidebar-minimized {
+    overflow-x: hidden !important;
+}
+
+/* Force map to extend fully when sidebar minimized */
+body.sidebar-minimized #map {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 0 !important;
+}
+
+.sidebar.minimized .sidebar-content {
+    display: none;
+}
+
+.sidebar.minimized .sidebar-header h3 {
+    display: none;
+}
+
+.sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid #e5e7eb;
+    background: #f9fafb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sidebar.minimized .sidebar-header {
+    padding: 10px;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.9);
+    border-bottom: none;
+    border-radius: 8px 0 0 8px;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+}
+
+.sidebar-header h3 {
+    margin: 0;
+    color: #1f2937;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.sidebar-content {
+    padding: 20px;
+}
+
+/* County Details */
+.county-details {
+    margin-bottom: 30px;
+    padding: 20px;
+    background: #f8fafc;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.county-details h4 {
+    margin: 0 0 15px 0;
+    color: #1e293b;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.county-details .result-summary,
+.county-details .winner-section,
+.county-details .margin-section,
+.county-details .vote-breakdown,
+.county-details .competitiveness-section {
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.county-details .result-summary:last-child,
+.county-details .winner-section:last-child,
+.county-details .margin-section:last-child,
+.county-details .vote-breakdown:last-child,
+.county-details .competitiveness-section:last-child {
+    border-bottom: none;
+}
+
+.county-details h5 {
+    margin: 0 0 8px 0;
+    color: #374151;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.county-details p {
+    margin: 4px 0;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+/* Research Findings */
+.findings-section {
+    border-top: 1px solid #e5e7eb;
+    padding-top: 20px;
+}
+
+.findings-section h4 {
+    margin: 0 0 20px 0;
+    color: #1f2937;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.finding-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.finding-card h5 {
+    margin: 0 0 12px 0;
+    color: #1f2937;
+    font-size: 15px;
+    font-weight: 600;
+    border-bottom: 2px solid #3b82f6;
+    padding-bottom: 6px;
+}
+
+.finding-card p {
+    margin: 8px 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #374151;
+}
+
+.finding-card .metric {
+    background: #eff6ff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    color: #1d4ed8;
+    display: inline-block;
+    margin: 2px;
+}
+
+.swing-arrow {
+    width: 24px;
+    height: 12px;
+    position: absolute;
+    z-index: 999;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    filter: drop-shadow(0px 0px 2px rgba(255, 255, 255, 0.8));
+    clip-path: polygon(0% 50%, 75% 0%, 75% 35%, 100% 35%, 100% 65%, 75% 65%, 75% 100%);
+}
+
+.swing-arrow.republican {
+    background-color: rgba(220, 38, 38, 0.9);
+    transform-origin: center center;
+    transform: rotate(0deg);
+}
+
+.swing-arrow.democratic {
+    background-color: rgba(37, 99, 235, 0.9);
+    transform-origin: center center;
+    transform: rotate(180deg);
+}
+
+.control-group {
+    margin-bottom: 15px;
+}
+
+.control-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #34495e;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+select, button {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    background: white;
+    transition: border-color 0.3s;
+}
+
+select:focus, button:focus {
+    outline: none;
+    border-color: #3498db;
+}
+
+button {
+    cursor: pointer;
+    margin: 3px 0;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #2980b9, #1f4e79);
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+    color: white;
+    border: none;
+}
+
+.btn-secondary:hover {
+    background: linear-gradient(135deg, #7f8c8d, #6c7b7d);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #27ae60, #229954);
+    color: white;
+    border: none;
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #229954, #1e8449);
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+    color: white;
+    border: none;
+}
+
+.btn-warning:hover {
+    background: linear-gradient(135deg, #e67e22, #d35400);
+}
+
+.analysis-mode {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.mode-toggle {
+    flex: 1;
+    padding: 8px;
+    text-align: center;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.mode-toggle.active {
+    background: #3498db;
+    color: white;
+    border-color: #3498db;
+}
+
+.legend {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    z-index: 1000;
+    max-height: 450px;
+    overflow-y: auto;
+    min-width: 200px;
+    transition: all 0.3s ease;
+}
+
+.legend.minimized {
+    padding: 10px;
+    min-width: 120px;
+}
+
+.legend-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.legend.minimized .legend-content {
+    display: none;
+}
+
+.legend h4 {
+    margin: 0 0 10px 0;
+    color: #2c3e50;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin: 4px 0;
+    font-size: 12px;
+    color: #34495e;
+}
+
+.legend-color {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+.status-panel {
+    position: absolute;
+    top: 20px;
+    right: 240px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    z-index: 1000;
+    max-width: 300px;
+    font-size: 13px;
+    color: #34495e;
+}
+
+.county-info {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    z-index: 1000;
+    max-width: 400px;
+    font-size: 13px;
+    display: none;
+}

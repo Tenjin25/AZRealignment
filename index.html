@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src='https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6.5.0/turf.min.js"></script>
+    <script src='scripts/common.js'></script>
+    <meta charset='utf-8'>
+    <title>AZ Political Realignment Map (2000-2024)</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no'>
+    <meta property="og:title" content="AZ Political Realignment Map (2000-2024)">
+    <meta property="og:description" content="Interactive visualization of Arizona's political trends from 2000 to 2024, showing county-level and precinct-level voting patterns.">
+    <meta property="og:image" content="preview.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link href='https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css' rel='stylesheet'>
+    <link href='styles/common.css' rel='stylesheet'>
+    <style>
+        html, body { height: 100vh; margin: 0; padding: 0; box-sizing: border-box; }
+        body { display: flex; flex-direction: row; height: 100vh; width: 100vw; margin: 0; padding: 0; }
+        #map { flex: 1 1 auto; position: relative; min-height: 0; height: 100vh; width: 100%; background: #f0f4f8; }
+        /* ...existing code from <attachment>... */
+    </style>
+</head>
+<body>
+        <div id="share-container" style="position: fixed; top: 20px; right: 440px; z-index: 1000;"></div>
+        <button id="sidebar-float-toggle" style="position:fixed;top:20px;right:20px;z-index:10001;width:56px;height:56px;background:#2563eb;color:#fff;border:none;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,0.15);font-size:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;">
+            +
+        </button>
+    <div id="map" style="position:relative;width:100%;height:100%;">
+        <canvas id="swingCanvas" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1000;"></canvas>
+    </div>
+
+    <!-- Sidebar for County Details and Research Findings -->
+
+<!-- Main Controls Dropdown (Contest Selector) -->
+<div class="main-controls" id="main-controls">
+    <div class="controls-header">
+        <h3>🗳️ AZ Political Contests</h3>
+        <button class="minimize-btn" onclick="toggleMainControls()" id="controls-minimize-btn">−</button>
+    </div>
+    <div class="controls-content" id="controls-content">
+        <div class="analysis-mode">
+            <div class="mode-toggle active" id="county-mode" onclick="setMode('county')">County Results</div>
+            <div class="mode-toggle" id="precinct-mode" onclick="setMode('precinct')">Precinct Patterns</div>
+        </div>
+        <div class="control-group">
+            <label>📊 Contest Type:</label>
+            <select id="contest">
+                <!-- Arizona contest options will be populated here -->
+            </select>
+        </div>
+        <button onclick="applyCategories()" class="btn-primary">
+            🎨 Apply Political Categories
+        </button>
+        <button onclick="resetView()" class="btn-secondary">
+            🔄 Reset View
+        </button>
+        <button onclick="toggleLabels()" class="btn-success">
+            🏷️ Toggle County Labels
+        </button>
+        <button onclick="togglePrecinctsLayer()" class="btn-warning">
+            📍 Toggle Precincts
+        </button>
+        <div class="control-group" style="margin-top: 15px;">
+            <label>🔍 Quick Analysis:</label>
+            <button onclick="showSwingCounties()" class="btn-secondary" style="font-size: 12px;">
+                <!-- Swing counties button -->
+            </button>
+        </div>
+        <div class="control-group">
+            <label>🔄 Compare to Previous:</label>
+            <select id="compare-election" onchange="showSwingArrows()">
+                <!-- Arizona election comparison options -->
+            </select>
+            <button onclick="hideSwingArrows()" class="btn-secondary">
+                <!-- Hide swing arrows button -->
+            </button>
+        </div>
+        </div> <!-- End controls-content -->
+    </div>
+
+<!-- Sidebar for County Details and Research Findings -->
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header" id="sidebar-header">
+        <h3>📊 County Analysis</h3>
+        <button class="minimize-btn" onclick="toggleSidebar()" id="sidebar-minimize-btn">−</button>
+    </div>
+    <div class="sidebar-content">
+        <!-- County Details Sidebar: moved above statewide margin -->
+        <div class="county-details" id="county-details" style="display: none;">
+          <h4 id="county-name">Select a County</h4>
+          <div id="county-info-content">
+            <!-- County info will be populated here -->
+          </div>
+        </div>
+        <div style="margin-bottom: 16px;">
+            <label for="county-search" style="font-weight:600;">Search County:</label>
+            <input type="text" id="county-search" placeholder="Type to search..." style="width:100%;padding:8px;border-radius:6px;margin-top:6px;margin-bottom:6px;" />
+        </div>
+        <div class="statewide-results" id="statewide-results">
+            <h4>🏛️ Arizona Statewide</h4>
+            <div id="statewide-content">
+                <!-- Statewide results will be populated here -->
+            </div>
+        </div>
+        <!-- Research Findings -->
+        <div class="findings-section">
+            <h4>🔍 Research Findings</h4>
+            <div class="finding-card">
+                <!-- Finding 1 -->
+            </div>
+            <div class="finding-card">
+                <!-- Finding 2 -->
+            </div>
+            <div class="finding-card">
+                <!-- Finding 3 -->
+            </div>
+        </div>
+    </div>
+    <div style="padding: 16px 0; text-align: center; color: #888; font-size: 15px; border-top: 1px solid #e5e7eb; background: #f9fafb;">
+        Created by Shamar Davis
+    </div>
+    <div class="status-panel" id="status" style="display:none;">
+        <button id="status-exit" title="Close" style="position:absolute;top:10px;right:10px;padding:4px 10px;border-radius:6px;border:none;background:#eee;cursor:pointer;font-weight:bold;font-size:18px;">×</button>
+        <strong>Status:</strong> Loading map and data...
+    </div>
+</div>
+
+<!-- Legend Block (independent, not inside sidebar) -->
+<div class="legend" id="legend">
+    <div class="legend-header">
+        <h4>Political Categories</h4>
+        <button class="minimize-btn" onclick="toggleLegend()" id="legend-minimize-btn">−</button>
+    </div>
+    <div class="legend-content" id="legend-content">
+        <!-- Legend items for Arizona -->
+        <div class="legend-item"><div class="legend-color" style="background: #67000d;"></div>Annihilation Republican (40%+)</div>
+        <div class="legend-item"><div class="legend-color" style="background: #a50f15;"></div>Dominant Republican (30-40%)</div>
+        <div class="legend-item"><div class="legend-color" style="background: #cb181d;"></div>Stronghold Republican (20-30%)</div>
+        <div class="legend-item"><div class="legend-color" style="background: #ef3b2c;"></div>Safe Republican (10-20%)</div>
+        <div class="legend-item"><div class="legend-color" style="background: #fb6a4a;"></div>Likely Republican (5.5-10%)</div>
+        <div class="legend-item"><div class="legend-color" style="background: #fcae91;"></div>Lean Republican (1-5.5%)</div>
+        <div class="legend-item"><div class="legend-color" style="background: #fee8c8;"></div>Tilt Republican (0.5-1%)</div>
+        <div class="legend-item"><div class="legend-color" style="background: #f7f7f7; border: 1px solid #999;"></div>Tossup (±0.5%)</div>
+        <div class="legend-item"><div class="legend-color" style="background: #e1f5fe;"></div>Tilt Democratic (0.5-1%)</div>
+        <div class="legend-item"><div class="legend-color" style="background: #c6dbef;"></div>Lean Democratic (1-5.5%)</div>
+        <div class="legend-item"><div class="legend-color" style="background: #9ecae1;"></div>Likely Democratic (5.5-10%)</div>
+        <div class="legend-item"><div class="legend-color" style="background: #6baed6;"></div>Safe Democratic (10-20%)</div>
+        <div class="legend-item"><div class="legend-color" style="background: #3182bd;"></div>Stronghold Democratic (20-30%)</div>
+        <div class="legend-item"><div class="legend-color" style="background: #08519c;"></div>Dominant Democratic (30-40%)</div>
+        <div class="legend-item"><div class="legend-color" style="background: #08306b;"></div>Annihilation Democratic (40%+)</div>
+    </div>
+</div>
+
+    <script>
+// ...existing code from <attachment>... (update contest, county, and statewide references to Arizona)
+    </script>
+</body>
+</html>
