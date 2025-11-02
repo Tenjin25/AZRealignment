@@ -1,0 +1,124 @@
+{
+  "categorization_system": {
+    "name": "Political Competitiveness Scale",
+    "description": "Classification system for political margins in Arizona elections",
+    "competitiveness_scale": {
+      "Republican": [
+        {
+          "category": "Annihilation",
+          "range": "R+40%+",
+          "color": "#67000d",
+          "threshold_min": 40,
+          "threshold_max": null
+        },
+        {
+          "category": "Dominant",
+          "range": "R+30-40%",
+          "color": "#a50f15",
+          "threshold_min": 30,
+          "threshold_max": 40
+        },
+        {
+          "category": "Stronghold",
+          "range": "R+20-30%",
+          "color": "#cb181d",
+          "threshold_min": 20,
+          "threshold_max": 30
+        },
+        {
+          "category": "Safe",
+          "range": "R+10-20%",
+          "color": "#ef3b2c",
+          "threshold_min": 10,
+          "threshold_max": 20
+        },
+        {
+          "category": "Likely",
+          "range": "R+5.5-10%",
+          "color": "#fb6a4a",
+          "threshold_min": 5.5,
+          "threshold_max": 10
+        },
+        {
+          "category": "Lean",
+          "range": "R+1-5.5%",
+          "color": "#fcae91",
+          "threshold_min": 1,
+          "threshold_max": 5.5
+        },
+        {
+          "category": "Tilt",
+          "range": "R+0.5-1%",
+          "color": "#fee8c8",
+          "threshold_min": 0.5,
+          "threshold_max": 1
+        }
+      ],
+      "Tossup": [
+        {
+          "category": "Tossup",
+          "range": "±0.5%",
+          "color": "#f7f7f7",
+          "threshold_min": 0,
+          "threshold_max": 0.5
+        }
+      ],
+      "Democratic": [
+        {
+          "category": "Tilt",
+          "range": "D+0.5-1%",
+          "color": "#e1f5fe",
+          "threshold_min": 0.5,
+          "threshold_max": 1
+        },
+        {
+          "category": "Lean",
+          "range": "D+1-5.5%",
+          "color": "#c6dbef",
+          "threshold_min": 1,
+          "threshold_max": 5.5
+        },
+        {
+          "category": "Likely",
+          "range": "D+5.5-10%",
+          "color": "#9ecae1",
+          "threshold_min": 5.5,
+          "threshold_max": 10
+        },
+        {
+          "category": "Safe",
+          "range": "D+10-20%",
+          "color": "#6baed6",
+          "threshold_min": 10,
+          "threshold_max": 20
+        },
+        {
+          "category": "Stronghold",
+          "range": "D+20-30%",
+          "color": "#3182bd",
+          "threshold_min": 20,
+          "threshold_max": 30
+        },
+        {
+          "category": "Dominant",
+          "range": "D+30-40%",
+          "color": "#08519c",
+          "threshold_min": 30,
+          "threshold_max": 40
+        },
+        {
+          "category": "Annihilation",
+          "range": "D+40%+",
+          "color": "#08306b",
+          "threshold_min": 40,
+          "threshold_max": null
+        }
+      ]
+    },
+    "usage_notes": {
+      "margin_calculation": "Margin percentage is calculated as: |Republican % - Democratic %|",
+      "color_application": "Colors should be applied based on margin percentage and winner",
+      "border_styling": "Tossup counties may benefit from a border to distinguish from nearby colors"
+    }
+  }
+}
